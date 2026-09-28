@@ -1,4 +1,4 @@
-# Build Stage
+# Build Stage for Docker
 FROM node:20-alpine AS builder
 
 WORKDIR /app
