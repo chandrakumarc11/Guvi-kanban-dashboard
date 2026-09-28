@@ -34,8 +34,8 @@ Health Check
 
 ## Application URL
 
-http://<EC2-PUBLIC-IP>:3000
+http://32.195.44.170:3000
 
 ## Docker Hub Repository
 
-https://hub.docker.com/r/chandru04/kanban-dashboard
+https://hub.docker.com/repository/docker/chandru04/kanban-dashboard/general
