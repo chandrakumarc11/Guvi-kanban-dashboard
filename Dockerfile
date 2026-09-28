@@ -1,32 +1,23 @@
 # Build Stage
-
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
-
 RUN npm install
 
 COPY . .
-
 RUN npm run build
 
 # Runtime Stage
-
 FROM node:20-alpine
 
 WORKDIR /app
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN npm install -g serve
 
-COPY --from=builder /app .
-
-USER appuser
+COPY --from=builder /app/dist ./dist
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-CMD wget --spider http://localhost:3000 || exit 1
-
-CMD ["npm","start"]
+CMD ["serve","-s","dist","-l","3000"]
