@@ -10,8 +10,11 @@ pipeline {
 
         stage('Checkout Source') {
             steps {
-                git branch: 'main',
-                url: 'https://github.com/chandrakumarc11/Guvi-kanban-dashboard.git'
+                git(
+                    branch: 'main',
+                    credentialsId: 'git_hub',
+                    url: 'https://github.com/chandrakumarc11/Guvi-kanban-dashboard.git'
+                )
             }
         }
 
@@ -55,12 +58,8 @@ pipeline {
                 docker stop kanban-app || true
                 docker rm kanban-app || true
 
-                docker run -d \
-                --name kanban-app \
-                --restart unless-stopped \
-                --memory=512m \
-                --cpus=1 \
-                -p 3000:80 \
+                docker run -d --name kanban-app --restart unless-stopped --memory=512m --cpus=1 \
+                -p 3000:3000 \
                 $IMAGE_NAME:$IMAGE_TAG
                 '''
             }
@@ -70,7 +69,6 @@ pipeline {
             steps {
                 sh '''
                 sleep 20
-
                 curl -f http://localhost:3000
                 '''
             }
@@ -78,17 +76,13 @@ pipeline {
     }
 
     post {
-
         success {
             echo 'Deployment Successful'
         }
 
         failure {
             echo 'Deployment Failed'
-
-            sh '''
-            docker logs kanban-app || true
-            '''
+            sh 'docker logs kanban-app || true'
         }
     }
 }
