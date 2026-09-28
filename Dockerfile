@@ -14,16 +14,19 @@ RUN npm run build
 
 # Runtime Stage
 
-FROM nginx:alpine
+FROM node:20-alpine
 
-RUN addgroup -S appgroup && \
-    adduser -S appuser -G appgroup
+WORKDIR /app
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-EXPOSE 80
+COPY --from=builder /app .
+
+USER appuser
+
+EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-CMD wget --spider http://localhost || exit 1
+CMD wget --spider http://localhost:3000 || exit 1
 
-CMD ["nginx","-g","daemon off;"]
+CMD ["npm","start"]
